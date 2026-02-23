@@ -22,3 +22,7 @@ together = "llm_together"
 [project.urls]
 "Homepage" = "https://github.com/wearedevx/llm-together"
 "Bug Tracker" = "https://github.com/wearedevx/llm-together/issues" 
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
