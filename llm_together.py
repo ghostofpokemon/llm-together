@@ -24,8 +24,34 @@ class Together(llm.Model):
     can_stream = True
 
     def get_models(self):
+        import time
+        import json
+        
+        path = llm.user_dir() / "together_models.json"
+        
+        if path.is_file():
+            if time.time() - path.stat().st_mtime < 3600:
+                with open(path, "r") as f:
+                    return json.load(f)
+
         together.api_key = self.get_key()
-        return together.Models.list()
+        if not together.api_key:
+            return []
+
+        try:
+            models = together.Models.list()
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w") as f:
+                json.dump(models, f)
+            return models
+        except Exception:
+            if path.is_file():
+                with open(path, "r") as f:
+                    return json.load(f)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w") as f:
+                json.dump([], f)
+            return []
     
     def __init__(self, model=None):
         together.api_key = self.get_key()
